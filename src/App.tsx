@@ -86,7 +86,7 @@ function App() {
 	};
 
 	return (
-		<>
+		<div className="" style={{ padding:"4rem" }}>
 			<Autocomplete
 				sx={{ width: 300 }}
 				open={open}
@@ -116,7 +116,7 @@ function App() {
 					/>
 				)}
 			/>
-		</>
+		</div>
 	);
 }
 
