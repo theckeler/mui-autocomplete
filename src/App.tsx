@@ -1,16 +1,9 @@
 import { Autocomplete, CircularProgress, TextField } from "@mui/material";
-import * as React from "react";
+import { useState } from "react";
 
 interface Radio {
 	name: string;
-}
-
-function sleep(duration: number): Promise<void> {
-	return new Promise<void>((resolve) => {
-		setTimeout(() => {
-			resolve();
-		}, duration);
-	});
+	stationuuid: string;
 }
 
 async function getData() {
@@ -21,29 +14,21 @@ async function getData() {
 		const data = await response.json();
 		return data;
 	} catch (error) {
-		console.error(error.message);
+		console.error(error);
 	}
 }
 
-// const radioStations = await fetch(
-// 	"http://all.api.radio-browser.info/json/stations/bystate/ohio"
-// );
-
-const radioStations = await getData();
-
 function App() {
-	const [open, setOpen] = React.useState(false);
-	const [options, setOptions] = React.useState<readonly Radio[]>([]);
-	const [loading, setLoading] = React.useState(false);
+	const [open, setOpen] = useState(false);
+	const [options, setOptions] = useState<readonly Radio[]>([]);
+	const [loading, setLoading] = useState(false);
 
-	const handleOpen = () => {
+	const handleOpen = async () => {
+		setLoading(true);
+		const radioStations = await getData();
+		setOptions([...radioStations]);
 		setOpen(true);
-		(async () => {
-			setLoading(true);
-			await sleep(1e3); // For demo purposes.
-			setLoading(false);
-			setOptions([...radioStations]);
-		})();
+		setLoading(false);
 	};
 
 	const handleClose = () => {
@@ -62,25 +47,34 @@ function App() {
 				getOptionLabel={(option) => option.name}
 				options={options}
 				loading={loading}
-				renderInput={(params) => (
-					<TextField
-						{...params}
-						label="Mike couldnt figure this out"
-						slotProps={{
-							input: {
-								...params.InputProps,
-								endAdornment: (
-									<React.Fragment>
-										{loading ? (
-											<CircularProgress color="inherit" size={20} />
-										) : null}
-										{params.InputProps.endAdornment}
-									</React.Fragment>
-								),
-							},
-						}}
-					/>
-				)}
+				renderOption={(props, option) => {
+					return (
+						<li {...props} key={option.stationuuid}>
+							{option.name}
+						</li>
+					);
+				}}
+				renderInput={(props) => {
+					return (
+						<TextField
+							{...props}
+							label="Select One"
+							slotProps={{
+								input: {
+									...props.InputProps,
+									endAdornment: (
+										<>
+											{loading ? (
+												<CircularProgress color="inherit" size={20} />
+											) : null}
+											{props.InputProps.endAdornment}
+										</>
+									),
+								},
+							}}
+						/>
+					);
+				}}
 			/>
 		</div>
 	);
