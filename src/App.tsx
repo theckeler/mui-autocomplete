@@ -37,9 +37,8 @@ function App() {
 	};
 
 	return (
-		<div className="" style={{ padding: "4rem" }}>
+		<>
 			<Autocomplete
-				sx={{ width: 300 }}
 				open={open}
 				onOpen={handleOpen}
 				onClose={handleClose}
@@ -76,7 +75,7 @@ function App() {
 					);
 				}}
 			/>
-		</div>
+		</>
 	);
 }
 
